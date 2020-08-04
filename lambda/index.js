@@ -27,7 +27,7 @@ exports.handler = async (event, context) => {
                     "column": 0,
                     "row": 1
                 },
-                "formula": "99"
+                "formula": "-10"
             });
 
     console.log("Attempting to login");
@@ -69,10 +69,6 @@ exports.handler = async (event, context) => {
         "mode": "cors",
         "credentials": "include"
     });
-
-    const templateReqData = await wtemplateReq.json();
-
-    console.log("Call end: " + JSON.stringify(templateReqData) );
 
     const templateData = await templateReq.json();
     const sheetsRegion = templateData['templates'][0]['arn'].split(":")[3];
