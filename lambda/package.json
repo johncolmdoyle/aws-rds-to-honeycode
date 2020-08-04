@@ -1,0 +1,16 @@
+{
+  "name": "sync-honeycode",
+  "version": "1.0.0",
+  "description": "Sync data from S3 into Honeycode",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.704.0",
+    "node-fetch": "^2.6.0",
+    "uuid": "^8.2.0"
+  }
+}
