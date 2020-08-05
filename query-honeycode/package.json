@@ -1,0 +1,19 @@
+{
+  "name": "query-honeycode",
+  "version": "1.0.0",
+  "description": "Call honeycode to find worksheet and table ids.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.704.0",
+    "deepdash": "^5.2.1",
+    "lodash": "^4.17.19",
+    "node-fetch": "^2.6.0",
+    "uuid": "^8.2.0",
+    "yargs": "^15.4.1"
+  }
+}
