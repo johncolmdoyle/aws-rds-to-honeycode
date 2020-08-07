@@ -42,3 +42,35 @@ resource "aws_iam_role" "lambda_role" {
 }
 EOF
 }
+
+resource "aws_iam_policy" "lambda_policy" {
+  name = "honeycode_lambda_policy"
+  description = "Access the S3 bucket"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "logs:*"
+      ],
+      "Resource": "arn:aws:logs:*:*:*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:*"
+      ],
+      "Resource": "${aws_s3_bucket.db_bucket.arn}/*"
+    }
+  ]
+} 
+    EOF
+  }
+
+resource "aws_iam_role_policy_attachment" "lambda_policy_attach" {
+  role       = "${aws_iam_role.lambda_role.name}"
+  policy_arn = "${aws_iam_policy.lambda_policy.arn}"
+}

@@ -8,7 +8,7 @@ resource "aws_lambda_function" "app_lambda" {
   filename         = "${path.module}/../dist/app.zip"
   function_name    = "app_lambda"
   role             = "${aws_iam_role.app_lambda_role.arn}"
-  handler          = "index.get"
+  handler          = "index.handler"
   source_code_hash = "${data.archive_file.app_zip.output_base64sha256}"
   runtime          = "nodejs12.x"
   timeout          = 60

@@ -6,4 +6,4 @@ DROP FUNCTION IF EXISTS export_to_s3;
 
 DROP TABLE IF EXISTS sample_table;
 
-CREATE TABLE sample_table (bid bigint PRIMARY KEY, name varchar(80));
+CREATE TABLE sample_table (id SERIAL PRIMARY KEY, name varchar, email varchar);
