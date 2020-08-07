@@ -3,7 +3,7 @@ CREATE OR REPLACE FUNCTION export_to_s3()
 AS $export_to_s3$
 BEGIN
 	PERFORM aws_s3.query_export_to_s3(
-		'select * from sample_table', 
+		'SELECT st.id, st.name, st.email, CASE WHEN st.email = ''boss@gizmo.codes'' THEN ''Boss'' ELSE ''Pleb'' END manager_check FROM sample_table st', 
 	   	aws_commons.create_s3_uri(
 	   		'S3_BUCKET_NAME', 
 	   		'test.csv', 
@@ -19,4 +19,3 @@ CREATE TRIGGER sample_table_trg
 	ON sample_table
 	FOR EACH STATEMENT
 		EXECUTE PROCEDURE export_to_s3();
-		

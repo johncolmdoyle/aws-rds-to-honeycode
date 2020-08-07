@@ -14,44 +14,47 @@ exports.handler = async (event, context) => {
         Key: 'test.csv' // path to the object you're looking for
     }
 
-    s3.getObject(getParams, function(err, data) {
-        if (err)
-            return err;
+    const csvRawData = await s3
+      .getObject(getParams)
+      .promise();
 
-        let csvData = data.Body.toString('utf-8'); // Use the encoding necessary
+    const csvString = csvRawData.Body.toString('utf-8');
 
-        let cells = [];
-        var lines = stringFile.split('\n');
+    var lines = csvString.split(/\r|\n/);
+    let cells = [];
 
-        var rowCount = 0;
+    // Lets not change the headers of the honeycode table
+    var rowCount = 1
+    for(var i = 0;i < lines.length;i++){
+        var columnCount = 0;
 
-        for(var i = 0;i < lines.length;i++){
-            var columnCount = 0;
+        var columns = lines[i].split(',');
+        for(var j = 0; j < columns.length;j++) {
+            cells.push({
+                "address": {
+                    "column": columnCount,
+                    "row": rowCount
+                },
+                "formula": columns[j]
+            });
 
-            var columns = lines[i].split(',');
-            for(var j = 0; j < columns.length;j++) {
-                cells.push({
-                    "address": {
-                        "column": columnCount,
-                        "row": rowCount
-                    },
-                    "formula": columns[j]
-                });
-
-                columnCount++;
-            }
-
-            rowCount++;
+            columnCount++;
         }
 
-        console.log("CSV Data: " + JSON.stringify(cells));
+        rowCount++;
+    }
 
-        const parameterLogin    = process.env.HONEYCODE_LOGIN;
-        const parameterPassword = process.env.HONEYCODE_PASSWORD;
-        const parameterWorkbook = process.env.HONEYCODE_WORKBOOK;
-        const parameterSheet    = process.env.HONEYCODE_SHEET;
+    // Remove the last blank row
+    cells.pop();
 
-        const loginReq = await fetch("https://bhauthngateway.us-east-1.honeycode.aws/v2/login", {
+    console.log("CSV Data: " + JSON.stringify(cells));
+
+    const parameterLogin    = process.env.HONEYCODE_LOGIN;
+    const parameterPassword = process.env.HONEYCODE_PASSWORD;
+    const parameterWorkbook = process.env.HONEYCODE_WORKBOOK;
+    const parameterSheet    = process.env.HONEYCODE_SHEET;
+
+    const loginReq = await fetch("https://bhauthngateway.us-east-1.honeycode.aws/v2/login", {
             "headers": {
                 "accept": "application/json, text/plain, */*",
                 "content-type": "application/json;charset=UTF-8",
@@ -66,15 +69,15 @@ exports.handler = async (event, context) => {
         });
         
         
-        let apitoken = '';
-        for (let cookie of loginReq.headers.raw()['set-cookie']) {
-            if (cookie.startsWith("bluesky-api-token=")) {
-                apitoken = cookie.split("=")[1].split(";")[0];
-                console.log("API Token found.");
-            }
+    let apitoken = '';
+    for (let cookie of loginReq.headers.raw()['set-cookie']) {
+        if (cookie.startsWith("bluesky-api-token=")) {
+            apitoken = cookie.split("=")[1].split(";")[0];
+            console.log("API Token found.");
         }
+    }
 
-        const templateReq = await fetch("https://control.us-west-2.honeycode.aws/templatelist-prod.txt", {
+    const templateReq = await fetch("https://control.us-west-2.honeycode.aws/templatelist-prod.txt", {
             "headers": {
                 "accept": "*/*",
                 "cookie": "bluesky-api-token=" + apitoken,
@@ -85,11 +88,11 @@ exports.handler = async (event, context) => {
             "credentials": "include"
         });
 
-        const templateData = await templateReq.json();
-        const sheetsRegion = templateData['templates'][0]['arn'].split(":")[3];
-        const sheetsAccount = templateData['templates'][0]['arn'].split(":")[4];
+    const templateData = await templateReq.json();
+    const sheetsRegion = templateData['templates'][0]['arn'].split(":")[3];
+    const sheetsAccount = templateData['templates'][0]['arn'].split(":")[4];
 
-        const workbookReq = await fetch("https://control.us-west-2.honeycode.aws/", {
+    const workbookReq = await fetch("https://control.us-west-2.honeycode.aws/", {
             "headers": {
                 "accept": "*/*",
                 "content-encoding": "amz-1.0",
@@ -108,9 +111,9 @@ exports.handler = async (event, context) => {
             "credentials": "include"
         });
 
-        const workbookData = await workbookReq.json();
+    const workbookData = await workbookReq.json();
 
-        const updateReq = await fetch("https://" + workbookData['workbook']['endpoint'] + "/external/", {
+    const updateReq = await fetch("https://" + workbookData['workbook']['endpoint'] + "/external/", {
             "headers": {
                 "accept": "application/json, text/javascript, */*",
                 "content-encoding": "amz-1.0, amz-1.0",
@@ -131,6 +134,5 @@ exports.handler = async (event, context) => {
             "credentials": "include"
         });
 
-        const updateData = await updateReq.json();
-    });
+    const updateData = await updateReq.json(); 
 };
