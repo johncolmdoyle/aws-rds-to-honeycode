@@ -5,7 +5,7 @@ resource "aws_api_gateway_rest_api" "example" {
 resource "aws_api_gateway_resource" "example" {
   rest_api_id = "${aws_api_gateway_rest_api.example.id}"
   parent_id   = "${aws_api_gateway_rest_api.example.root_resource_id}"
-  path_part   = "helloworld"
+  path_part   = "honeycode-sync"
 }
 
 resource "aws_api_gateway_method" "example" {
@@ -34,7 +34,7 @@ resource "aws_lambda_permission" "apigw_lambda" {
   principal     = "apigateway.amazonaws.com"
 
   # More: http://docs.aws.ama`zon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
-  source_arn = "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.example.id}/*/${aws_api_gateway_method.example.http_method}${aws_api_gateway_resource.example.path}"
+  source_arn = "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.example.id}/*/*${aws_api_gateway_resource.example.path}"
 }
 
 resource "aws_api_gateway_deployment" "example" {

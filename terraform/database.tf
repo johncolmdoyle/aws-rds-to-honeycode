@@ -36,6 +36,8 @@ resource "aws_db_parameter_group" "aurora_db_postgres96_parameter_group" {
   name        = "test-aurora-db-postgres11-parameter-group"
   family      = "aurora-postgresql11"
   description = "test-aurora-db-postgres11-parameter-group"
+
+  depends_on = [aws_lambda_function.honeycode_lambda]
 }
 
 resource "aws_rds_cluster_parameter_group" "aurora_cluster_postgres96_parameter_group" {

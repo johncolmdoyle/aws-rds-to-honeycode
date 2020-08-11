@@ -58,8 +58,7 @@ function post(event, context, callback) {
     let id = 0;
 
     if (event.httpMethod && event.body && event.httpMethod == "POST") {
-        var bodyText = new Buffer(event.body, 'base64').toString('ascii');
-        var jsonBody = JSON.parse(bodyText);
+        var jsonBody = JSON.parse(event.body);
         console.log("JSON: " + bodyText);
     }
 
