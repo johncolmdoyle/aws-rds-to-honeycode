@@ -191,7 +191,27 @@ async function tables() {
         }
     }
 
-    const tableReq = await fetch("https://pod17.dp.us-west-2.honeycode.aws/external/", {
+    const controlReq = await fetch("https://control.us-west-2.honeycode.aws/", {
+        "headers": {
+            "accept": "*/*",
+            "content-encoding": "amz-1.0",
+            "content-type": "application/json",
+            "x-amz-target": "com.amazon.sheets.control.api.SheetsControlServiceAPI_20170701.DescribeWorkbook",
+            "x-client-id": "clientRegion|BeehiveSDSJSUtils||||",
+            "cookie": "bluesky-api-token=" + apitoken,
+            "origin": "https://builder.honeycode.aws"
+        },
+        "body": JSON.stringify({workbook: parameterWorkbookArn}),
+        "method": "POST",
+        "mode": "cors",
+        "credentials": "include"
+    });
+
+    const controlData = await controlReq.json();
+
+    const honeyCodeURL = controlData.workbook.endpoint;
+
+    const tableReq = await fetch("https://" + honeyCodeURL + "/external/", {
         "headers": {
             "accept": "*/*",
             "content-encoding": "amz-1.0",
@@ -213,7 +233,9 @@ async function tables() {
     var rowCount = tableData.items.length;
     for (var i=0; i< rowCount; i++) {
         if (tableData.items[i].category == "user") {
-            foundTables.push({"table": tableData.items[i].sheetName, "tableUUID": tableData.items[i].sheetArn});
+            let sheetArn = tableData.items[i].sheetArn.split("/");
+            
+            foundTables.push({"table": tableData.items[i].sheetName, "tableUUID": sheetArn[1]});
        }
     }
 
