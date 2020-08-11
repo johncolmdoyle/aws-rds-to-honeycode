@@ -59,7 +59,6 @@ function post(event, context, callback) {
 
     if (event.httpMethod && event.body && event.httpMethod == "POST") {
         var jsonBody = JSON.parse(event.body);
-        console.log("JSON: " + bodyText);
     }
 
     const parameterDBUsername = process.env.DB_USERNAME;
