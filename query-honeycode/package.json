@@ -9,7 +9,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "aws-sdk": "^2.704.0",
+    "aws-sdk": "^2.814.0",
     "deepdash": "^5.2.1",
     "lodash": "^4.17.19",
     "node-fetch": "^2.6.0",
